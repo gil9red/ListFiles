@@ -3,7 +3,7 @@
 ** Copyright (C) 2013 Digia Plc and/or its subsidiary(-ies).
 ** Contact: http://www.qt-project.org/legal
 **
-** This file is part of the examples of the Qt Toolkit.
+** This file is part of the Qt Quick Controls module of the Qt Toolkit.
 **
 ** $QT_BEGIN_LICENSE:BSD$
 ** You may use this file under the terms of the BSD license as follows:
@@ -38,63 +38,51 @@
 **
 ****************************************************************************/
 
-import QtQuick 2.0
-import QtQuick.Particles 2.0
+import QtQuick 2.2
 
-Rectangle {
-    color: "white"
-    width: 640
-    height: 480
-    ParticleSystem {
-        id: sys
-    }
+Item {
+    id: root
+    width: parent.width
+    height: 88
 
-    ImageParticle {
-        // ![0]
-        sprites: [
-            Sprite {
-                name: "bear"
-                source: "../../images/bear_tiles.png"
-                frameCount: 13
-                frameDuration: 120
-            }
-        ]
-        colorVariation: 0.5
-        rotationVelocityVariation: 360
-        colorTable: "../../images/colortable.png"
-        // ![0]
-        system: sys
-    }
+    property alias text: textitem.text
+    signal clicked
 
-    Friction {
-        factor: 0.1
-        system: sys
-    }
-
-    Emitter {
-        system: sys
-        anchors.centerIn: parent
-        id: particles
-        emitRate: 200
-        lifeSpan: 6000
-        velocity: AngleDirection {angleVariation: 360; magnitude: 80; magnitudeVariation: 40}
-        size: 60
-        endSize: 120
+    Rectangle {
+        anchors.fill: parent
+        color: "#11ffffff"
+        visible: mouse.pressed
     }
 
     Text {
-        x: 16
-        y: 16
-        text: "QML..."
-        style: Text.Outline; styleColor: "#AAAAAA"
+        id: textitem
+        color: "white"
         font.pixelSize: 32
+        text: modelData
+        anchors.verticalCenter: parent.verticalCenter
+        anchors.left: parent.left
+        anchors.leftMargin: 30
     }
-    Text {
-        anchors.bottom: parent.bottom
+
+    Rectangle {
+        anchors.left: parent.left
         anchors.right: parent.right
-        anchors.margins: 16
-        text: "... can you be trusted with the power?"
-        style: Text.Outline; styleColor: "#AAAAAA"
-        font.pixelSize: width > 400 ? 32 : 16
+        anchors.margins: 15
+        height: 1
+        color: "#424246"
+    }
+
+    Image {
+        anchors.right: parent.right
+        anchors.rightMargin: 20
+        anchors.verticalCenter: parent.verticalCenter
+        source: "../images/navigation_next_item.png"
+    }
+
+    MouseArea {
+        id: mouse
+        anchors.fill: parent
+        onClicked: root.clicked()
+
     }
 }

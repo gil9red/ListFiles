@@ -3,7 +3,7 @@
 ** Copyright (C) 2013 Digia Plc and/or its subsidiary(-ies).
 ** Contact: http://www.qt-project.org/legal
 **
-** This file is part of the examples of the Qt Toolkit.
+** This file is part of the Qt Quick Controls module of the Qt Toolkit.
 **
 ** $QT_BEGIN_LICENSE:BSD$
 ** You may use this file under the terms of the BSD license as follows:
@@ -38,79 +38,41 @@
 **
 ****************************************************************************/
 
-import QtQuick 2.0
-import QtQuick.Particles 2.0
+import QtQuick 2.2
+import QtQuick.Controls 1.2
+import QtQuick.Controls.Styles 1.1
 
-Rectangle {
-    color: "lightsteelblue"
-    width: 800
-    height: 800
-    id: root
+ScrollView {
+    width: parent.width
+    height: parent.height
+    id : scrollView
 
-    SpriteSequence {
-        sprites: Sprite {
-                name: "bear"
-                source: "../../images/bear_tiles.png"
-                frameCount: 13
-                frameDuration: 120
-            }
-        width: 250
-        height: 250
-        x: 20
-        anchors.bottom: parent.bottom
-        anchors.bottomMargin: 20
-        z:4
-    }
+    flickableItem.interactive: true
 
-    ParticleSystem { id: sys }
-
-    ImageParticle {
+    ListView {
+        id : view
         anchors.fill: parent
-        id: particles
-        system: sys
-        sprites: [Sprite {
-            name: "happy"
-            source: "../../images/starfish_1.png"
-            frameCount: 1
-            frameDuration: 260
-            to: {"happy": 1, "silly": 1, "angry": 1}
-        }, Sprite {
-            name: "angry"
-            source: "../../images/starfish_0.png"
-            frameCount: 1
-            frameDuration: 260
-            to: {"happy": 1, "silly": 1, "angry": 1}
-        }, Sprite {
-            name: "silly"
-            source: "../../images/starfish_2.png"
-            frameCount: 1
-            frameDuration: 260
-            to: {"happy": 1, "silly": 1, "noticedbear": 0}
-        }, Sprite {
-            name: "noticedbear"
-            source: "../../images/starfish_3.png"
-            frameCount: 1
-            frameDuration: 2600
-        }]
+        delegate: AndroidDelegate
+        model: programListModel
     }
 
-    Emitter {
-        system: sys
-        emitRate: 2
-        lifeSpan: 10000
-        velocity: AngleDirection {angle: 90; magnitude: 60; angleVariation: 5}
-        acceleration: PointDirection { y: 10 }
-        size: 160
-        sizeVariation: 40
-        width: parent.width
-        height: 100
-    }
-
-    SpriteGoal {
-        system: sys
-        width: root.width;
-        height: root.height/2;
-        y: root.height/2;
-        goalState:"noticedbear"
+    style: ScrollViewStyle {
+        transientScrollBars: true
+        handle: Item {
+            implicitWidth: 14
+            implicitHeight: 26
+            Rectangle {
+                color: "#424246"
+                anchors.fill: parent
+                anchors.topMargin: 6
+                anchors.leftMargin: 4
+                anchors.rightMargin: 4
+                anchors.bottomMargin: 6
+            }
+        }
+        scrollBarBackground: Item {
+            implicitWidth: 14
+            implicitHeight: 26
+        }
     }
 }

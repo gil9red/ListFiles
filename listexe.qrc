@@ -1,56 +1,5 @@
 <RCC>
     <qresource prefix="/">
         <file>qml/main.qml</file>
-        <file>qml/shared/Button.qml</file>
-        <file>qml/shared/CheckBox.qml</file>
-        <file>qml/shared/LauncherList.qml</file>
-        <file>qml/shared/SimpleLauncherDelegate.qml</file>
-        <file>qml/shared/Slider.qml</file>
-        <file>qml/shared/TabSet.qml</file>
-        <file>qml/shared/TextField.qml</file>
-        <file>qml/shared/images/back.png</file>
-        <file>qml/shared/images/checkmark.png</file>
-        <file>qml/shared/images/next.png</file>
-        <file>qml/shared/images/qt-logo.png</file>
-        <file>qml/shared/images/slider_handle.png</file>
-        <file>qml/shared/images/tab.png</file>
-        <file>qml/content/allatonce.qml</file>
-        <file>qml/content/colored.qml</file>
-        <file>qml/content/colortable.qml</file>
-        <file>qml/content/deformation.qml</file>
-        <file>qml/content/rotation.qml</file>
-        <file>qml/content/sharing.qml</file>
-        <file>qml/content/sprites.qml</file>
-        <file>images/_explo.png</file>
-        <file>images/backgroundLeaves.jpg</file>
-        <file>images/bear_tiles.png</file>
-        <file>images/candle.png</file>
-        <file>images/colortable.png</file>
-        <file>images/finalfrontier.png</file>
-        <file>images/flower.png</file>
-        <file>images/matchmask.png</file>
-        <file>images/meteor.png</file>
-        <file>images/meteor_explo.png</file>
-        <file>images/meteors.png</file>
-        <file>images/nullRock.png</file>
-        <file>images/particle2.png</file>
-        <file>images/particle3.png</file>
-        <file>images/particleA.png</file>
-        <file>images/portal_bg.png</file>
-        <file>images/realLeaf1.png</file>
-        <file>images/realLeaf2.png</file>
-        <file>images/realLeaf3.png</file>
-        <file>images/realLeaf4.png</file>
-        <file>images/rocket2.png</file>
-        <file>images/rocket.png</file>
-        <file>images/sizeInOut.png</file>
-        <file>images/snowflake.png</file>
-        <file>images/sparkleSize.png</file>
-        <file>images/starfish_0.png</file>
-        <file>images/starfish_1.png</file>
-        <file>images/starfish_2.png</file>
-        <file>images/starfish_3.png</file>
-        <file>images/starfish_4.png</file>
-        <file>images/starfish_mask.png</file>
     </qresource>
 </RCC>

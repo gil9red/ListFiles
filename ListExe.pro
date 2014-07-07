@@ -2,7 +2,9 @@ QT += qml quick widgets
 
 # The .cpp file which was generated for your project. Feel free to hack it.
 SOURCES += main.cpp \
-    foo.cpp
+    programlistmodel.cpp
+
+DESTDIR = ../bin
 
 OTHER_FILES += \
     qml/main.qml \
@@ -15,7 +17,9 @@ OTHER_FILES += \
     qml/shared/TextField.qml
 
 RESOURCES += \
-    listexe.qrc
+    listexe.qrc \
+    shared.qrc \
+    content.qrc
 
 HEADERS += \
-    foo.h
+    programlistmodel.h
