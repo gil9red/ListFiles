@@ -1,17 +1,17 @@
-//#ifndef FILEICONIMAGEPROVIDER_H
-//#define FILEICONIMAGEPROVIDER_H
+#ifndef FILEICONIMAGEPROVIDER_H
+#define FILEICONIMAGEPROVIDER_H
 
-//#include <QQuickImageProvider>
+#include <QQuickImageProvider>
 
-//class FileListModel;
+class FileListModel;
 
-//class FileIconImageProvider : public QQuickImageProvider {
-//public:
-//    FileIconImageProvider(FileListModel * model);
-//    QPixmap requestPixmap(const QString &id, QSize *size, const QSize &requestedSize);
+class FileIconImageProvider : public QQuickImageProvider {
+public:
+    FileIconImageProvider(FileListModel * model);
+    QPixmap requestPixmap(const QString &id, QSize *size, const QSize &requestedSize);
 
-//private:
-//    FileListModel * fileListModel;
-//};
+private:
+    FileListModel * fileListModel;
+};
 
-//#endif // FILEICONIMAGEPROVIDER_H
+#endif // FILEICONIMAGEPROVIDER_H

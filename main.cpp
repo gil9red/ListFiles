@@ -5,10 +5,8 @@
 #include <QQmlApplicationEngine>
 #include <QQmlContext>
 
-#include "filelistmodel.h"
+#include "filelistmanager.h"
 
-#include <QDir>
-#include <QStandardPaths>
 #include <QDebug>
 
 int main(int argc, char* argv[])
@@ -25,16 +23,11 @@ int main(int argc, char* argv[])
     QQmlContext * rootContext = engine.rootContext();
     rootContext->setContextProperty("app", qApp);
 
-    FileListModel fileListModel;
-    rootContext->setContextProperty("fileListModel", &fileListModel);
+    FileListManager fileListManager;
+    rootContext->setContextProperty("fileListManager", &fileListManager);
+    rootContext->setContextProperty("fileListModel", fileListManager.getModel());
 
-    // Добавим в модель себя же и все ярлыки и ехе на рабочем столе
-    fileListModel.addFile(qApp->applicationFilePath());
-    foreach (QFileInfo info, QDir( QStandardPaths::standardLocations(QStandardPaths::DesktopLocation).first() ).entryInfoList(QStringList()<<"*.*", QDir::Files | QDir::NoDotAndDotDot)) {
-        fileListModel.addFile(info.absoluteFilePath());
-    }
-
-//    engine.addImageProvider("fileicon", fileListModel.getNewImageProvider());
+    engine.addImageProvider("fileicon", fileListManager.getImageProvider());
     engine.load(QUrl("qrc:/qml/main.qml"));
 
     return app.exec();

@@ -1,9 +1,6 @@
 <RCC>
     <qresource prefix="/">
         <file>qml/main.qml</file>
-        <file>qml/content/about.qml</file>
-        <file>qml/content/edit.qml</file>
-        <file>qml/content/files.qml</file>
         <file>qml/images/button_default.png</file>
         <file>qml/images/button_pressed.png</file>
         <file>qml/images/toolbar.png</file>

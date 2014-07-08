@@ -1,16 +1,15 @@
-//#include "fileiconimageprovider.h"
-//#include <QDebug>
-//#include "filelistmodel.h"
+#include "fileiconimageprovider.h"
+#include <QDebug>
+#include "filelistmodel.h"
 
-//FileIconImageProvider::FileIconImageProvider(FileListModel * model)
-//    : QQuickImageProvider(QQmlImageProviderBase::Pixmap),
-//      fileListModel(model) {
-//}
+FileIconImageProvider::FileIconImageProvider(FileListModel * model)
+    : QQuickImageProvider(QQmlImageProviderBase::Pixmap),
+      fileListModel(model) {
+}
 
-//QPixmap FileIconImageProvider::requestPixmap(const QString &id, QSize *size, const QSize &requestedSize) {
-//    QPixmap pixmap = fileListModel->iconFileFromId(id).scaled(requestedSize, Qt::IgnoreAspectRatio);
-//    if (size)
-//        *size = pixmap.size();
-//    qDebug() << QString("requestPixmap(%1)").arg(id) << "pixmap=" << pixmap;
-//    return pixmap;
-//}
+QPixmap FileIconImageProvider::requestPixmap(const QString &id, QSize *size, const QSize &requestedSize) {
+    QPixmap pixmap = fileListModel->iconFileFromId(id);
+    if (size)
+        *size = pixmap.size();
+    return pixmap;
+}
