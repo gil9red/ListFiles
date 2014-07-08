@@ -1,11 +1,7 @@
 import QtQuick 2.0
-import "shared"
-import "content"
-
 import QtQuick.Controls 1.1
 import QtQuick.Layouts 1.1
 import QtQuick.Controls.Styles 1.1
-import QtQuick.XmlListModel 2.0
 import QtQuick.Dialogs 1.1
 
 ApplicationWindow {
@@ -14,153 +10,164 @@ ApplicationWindow {
     width: 600
     height: 480
 
-    title: "ListExe author Ilya Petrash"
+    title: app.applicationName + " author Ilya Petrash" + " v" + app.applicationVersion
     visible: true
+
     Rectangle {
         color: "#212126"
         anchors.fill: parent
     }
 
+    toolBar: BorderImage {
+        border.bottom: 8
+        source: "../qml/images/toolbar.png"
+        width: parent.width
+        height: labelHeader.font.pixelSize + labelHeader.font.pixelSize / 2
+
+        Text {
+            id : labelHeader
+            font.pixelSize: 40
+            Behavior on x { NumberAnimation{ easing.type: Easing.OutCubic} }
+            x: 20
+            anchors.verticalCenter: parent.verticalCenter
+            color: "white"
+            text: app.applicationName + " v" + app.applicationVersion
+        }
+    }
+
     RowLayout {
         anchors.fill: parent
 
-        //        Rectangle {
-        //            border.color: "black"
-        //            Layout.fillWidth: true
-        //            Layout.fillHeight: true
+        StackView {
+            id: stackView
 
-        ScrollView {
             Layout.fillWidth: true
             Layout.fillHeight: true
 
-            width: parent.width
-            height: parent.height
+            // Implements back key navigation
+            focus: true
 
-            flickableItem.interactive: true
+            initialItem: ScrollView {
+                id : scrollView
 
-            ListView {
-                id : programView
-                anchors.fill: parent
-                delegate: programDelegate
-                model: programListModel
-                highlight: Rectangle { color: "#22ffffff"; }
-            }
+                Layout.fillWidth: true
+                Layout.fillHeight: true
 
-            style: ScrollViewStyle {
-                transientScrollBars: true
-                handle: Item {
-                    implicitWidth: 14
-                    implicitHeight: 26
-                    Rectangle {
-                        color: "#424246"
-                        anchors.fill: parent
-                        anchors.topMargin: 6
-                        anchors.leftMargin: 4
-                        anchors.rightMargin: 4
-                        anchors.bottomMargin: 6
-                    }
-                }
-                scrollBarBackground: Item {
-                    implicitWidth: 14
-                    implicitHeight: 26
-                }
-            }
-        }
-
-        Component {
-            id: programDelegate
-            Item {
-                id : root
                 width: parent.width
-                height: 88
+                height: parent.height
 
-                property alias text: textitem.text // текущий текст
-                signal clicked
+                flickableItem.interactive: true
 
-                Rectangle {
+                ListView {
+                    spacing: 5 // Расстояние между элементами
+                    id : fileView
                     anchors.fill: parent
-                    color: "#11ffffff"
-                    visible: mouse.pressed
+                    delegate: fileDelegate
+                    model: fileListModel
+                    highlight: Rectangle { color: "#22ffffff"; }
                 }
 
-                Text {
-                    id: textitem
-                    color: "white"
-                    font.pixelSize: 32
-                    text: name
-                    elide : Text.ElideRight;
-                    width: root.width
-                    anchors.verticalCenter: parent.verticalCenter
-                    anchors.left: parent.left
-                    anchors.leftMargin: 30
+                style: ScrollViewStyle {
+                    transientScrollBars: true
+                    handle: Item {
+                        implicitWidth: 14
+                        implicitHeight: 26
+                        Rectangle {
+                            color: "#424246"
+                            anchors.fill: parent
+                            anchors.topMargin: 6
+                            anchors.leftMargin: 4
+                            anchors.rightMargin: 4
+                            anchors.bottomMargin: 6
+                        }
+                    }
+                    scrollBarBackground: Item {
+                        implicitWidth: 14
+                        implicitHeight: 26
+                    }
                 }
+            }
 
-                Rectangle {
-                    anchors.left: parent.left
-                    anchors.right: parent.right
-                    anchors.margins: 15
-                    height: 1
-                    color: "#424246"
-                }
+            Component {
+                id: fileDelegate
+                Item {
+                    id : root
+                    width: parent.width - 20 // примерная ширина вертикального скрола
+                    height: 40
 
-                Image {
-                    anchors.right: parent.right
-                    anchors.rightMargin: 20
-                    anchors.verticalCenter: parent.verticalCenter
-                    source: "image://programicon/" + idicon
-                }
+                    property alias nameFile: nameFileItem.text // текущее имя файла
+                    property alias pathFile: pathFileItem.text // текущий путь к файлу
+                    signal clicked
 
-                MouseArea {
-                    id: mouse
-                    anchors.fill: parent
-                    onClicked: {
-                        root.clicked()
-                        programView.currentIndex = index
+                    Rectangle {
+                        anchors.fill: parent
+                        color: "#11ffffff"
+                        visible: mouse.pressed
+                    }
+
+//                    Row {
+                    Column {
+                        x: 10 // Отступ слева
+                        Text {
+                            id: nameFileItem
+                            color: "white"
+                            font.pixelSize: 20
+                            text: name
+                            elide : Text.ElideRight;
+                            width: root.width - run.width
+                        }
+
+                        Text {
+                            id: pathFileItem
+                            x: 10 // Отступ слева
+                            color: "white"
+                            font.pixelSize: 12
+                            text: path
+                            elide : Text.ElideRight;
+                            width: root.width - run.width
+                        }
+                    }
+
+//                    Button {
+//                        text: "Run"
+//                        width: 30
+//                        id : run
+//                        style: touchStyle
+//                        anchors.right: parent.anchors
+//                        anchors.centerIn: parent.anchors
+//                    }
+//                    }
+
+                    //                    Rectangle {
+                    //                        anchors.left: parent.left
+                    //                        anchors.right: parent.right
+                    //                        anchors.margins: 15
+                    //                        height: 1
+                    //                        color: "#424246"
+                    //                    }
+
+                    //                    Image {
+                    //                        anchors.right: parent.right
+                    //                        anchors.rightMargin: 20
+                    //                        anchors.verticalCenter: parent.verticalCenter
+                    //                        source: "image://fileicon/" + idicon
+                    //                    }
+
+                    MouseArea {
+                        id: mouse
+                        anchors.fill: parent
+                        onClicked: {
+                            root.clicked()
+                            fileView.currentIndex = index
+                            console.log("About click on: " + root.nameFile)
+                        }
                     }
                 }
             }
         }
-
-        //            Content.ListPage {
-        ////                id: grid
-        //                anchors.fill: parent
-        ////                cellWidth: 80; cellHeight: 80
-
-        ////                model:
-        ////                model: programListModel
-        ////                delegate: programDelegate
-        ////                delegate: Content.AndroidDelegate
-        ////                highlight: Rectangle { color: "lightsteelblue"; radius: 5 }
-        ////                focus: true
-        //            }
-
-        //            Component {
-        //                id: programDelegate
-        //                Item {
-        //                    width: grid.cellWidth; height: grid.cellHeight
-
-        //                    Column {
-        //                        anchors.fill: parent
-        //                        Image {
-        //                            horizontalAlignment: Image.AlignHCenter
-        //                            source: "image://programicon/" + idicon;
-        //                            sourceSize.width: grid.cellWidth / 2
-        //                            sourceSize.height: grid.cellHeight / 2
-        //                        }
-        //                        Text { text: name; elide : Text.ElideRight; width: grid.cellWidth; }
-        //                        Text { text: path; elide : Text.ElideRight; width: grid.cellWidth; }
-        //                        Text { text: args; elide : Text.ElideRight; width: grid.cellWidth; }
-        //                    }
-        //                    MouseArea {
-        //                        anchors.fill: parent
-        //                        onClicked: parent.GridView.view.currentIndex = index
-        //                    }
-        //                }
-        //            }
-        //        }
 
         Item {
-            width: 70
+            width: 80
             Layout.alignment: Qt.AlignTop
 
             ColumnLayout {
@@ -169,92 +176,74 @@ ApplicationWindow {
                 Button {
                     text: qsTr("Add")
                     id: add
-                    style: buttonStyle
+                    style: touchStyle
                     Layout.fillWidth: true
-//                    onClicked: /*FileDialog {
-//                        visible: true
-////                        modality: Qt.WindowModal
-//                        title: "Choose a file"
-//                        selectExisting: true
-//                        nameFilters: [ "EXE (*.exe *.lnk)" ]
-//                        selectedNameFilter: "EXE (*.exe *.lnk)"
-//                        onAccepted: programListModel.addProgram(fileUrl);
-//                    }*/
-////                               FileDialog {
-////                        id: fileDialog
-////                        title: "Please choose a file"
-////                        onAccepted: {
-////                            console.log("You chose: " + fileDialog.fileUrls)
-////                            programListModel.addProgram(fileDialog.fileUrls);
-//////                            Qt.quit()
-////                        }
-////                        onRejected: {
-////                            console.log("Canceled")
-//////                            Qt.quit()
-////                        }
-////                        Component.onCompleted: visible = true
-////                    }
+                    onClicked: fileListModel.addfile("<path_to_exe>")
                 }
 
                 Button {
                     text: qsTr("Remove")
                     id: remove
-                    style: buttonStyle
+                    style: touchStyle
                     Layout.fillWidth: true
-                    onClicked: programListModel.removeProgram(programView.currentIndex)
+                    onClicked: fileListModel.removefile(fileView.currentIndex)
                 }
 
                 Button {
                     text: qsTr("Edit")
-                    id: edit
-                    style: buttonStyle
+                    style: touchStyle
                     Layout.fillWidth: true
+                    onClicked: { stackView.push(Qt.resolvedUrl("content/edit.qml")) }
                 }
 
                 Button {
                     text: qsTr("Run")
                     id: run
-                    style: buttonStyle
+                    style: touchStyle
                     implicitWidth: parent.width
                     onClicked: text = app.platformName
                 }
 
                 Button {
-                    text: qsTr("About Qt")
-                    id: about
-                    style: buttonStyle
+                    text: qsTr("About")
+                    style: touchStyle
                     Layout.fillWidth: true
-                    onClicked: foo.say()
+                    onClicked: { stackView.push(Qt.resolvedUrl("content/about.qml")) }
                 }
 
                 Button {
                     text: qsTr("Quit")
-                    id: quit
-                    style: buttonStyle
+                    style: touchStyle
                     Layout.fillWidth: true
-
                     onClicked: mainWindow.close()
                 }
             }
-        }
-    }
 
-    property Component buttonStyle: ButtonStyle {
-        background: Rectangle {
-            implicitHeight: 22
-            implicitWidth: parent.width
-            color: control.pressed ? "darkGray" : control.activeFocus ? "#cdd" : "#ccc"
-            antialiasing: true
-            border.color: "gray"
-            radius: height/2
-            Rectangle {
-                anchors.fill: parent
-                anchors.margins: 1
-                color: "transparent"
-                antialiasing: true
-                visible: !control.pressed
-                border.color: "#aaffffff"
-                radius: height/2
+            Component {
+                id: touchStyle
+                ButtonStyle {
+                    panel: Item {
+                        implicitHeight: 30
+                        implicitWidth: 80
+                        BorderImage {
+                            anchors.fill: parent
+                            antialiasing: true
+                            border.bottom: 8
+                            border.top: 8
+                            border.left: 8
+                            border.right: 8
+                            anchors.margins: control.pressed ? -4 : 0
+                            source: control.pressed ? "../qml/images/button_pressed.png" : "../qml/images/button_default.png"
+                            Text {
+                                text: control.text
+                                anchors.centerIn: parent
+                                color: "white"
+                                font.pixelSize: 14
+                                renderType: Text.NativeRendering
+                            }
+                        }
+                    }
+                }
             }
         }
     }

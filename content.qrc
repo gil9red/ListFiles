@@ -1,6 +1,0 @@
-<RCC>
-    <qresource prefix="/">
-        <file>qml/content/AndroidDelegate.qml</file>
-        <file>qml/content/ListPage.qml</file>
-    </qresource>
-</RCC>
