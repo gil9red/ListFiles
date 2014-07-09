@@ -20,13 +20,10 @@ int main(int argc, char* argv[])
 
     FileListManager fileListManager;
     rootContext->setContextProperty("fileListManager", &fileListManager);
-//    rootContext->setContextProperty("fileListModel", fileListManager.getModel());
     rootContext->setContextProperty("fileListModel", fileListManager.getSortFilterProxyModel());
 
     engine.addImageProvider("fileicon", fileListManager.getImageProvider());
     engine.load(QUrl("qrc:/qml/main.qml"));
-
-    fileListManager.read();
 
     return app.exec();
 }

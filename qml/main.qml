@@ -35,6 +35,20 @@ ApplicationWindow {
         }
     }
 
+    onVisibleChanged: {
+        fileListManager.read()
+        updateStates()
+    }
+
+    function updateStates(){
+        var hasCurrentIndex = fileView.currentIndex !== -1
+        editButton.enabled = hasCurrentIndex
+        runButton.enabled = hasCurrentIndex
+
+        var isEmpty = fileView.count === 0
+        removeButton.enabled = !isEmpty
+    }
+
     Item {
         anchors.fill: parent
 
@@ -63,15 +77,8 @@ ApplicationWindow {
                         model: fileListModel
                         highlight: Rectangle { color: "#22ffffff"; }
 
-                        onCurrentIndexChanged: {
-                            var hasCurrentIndex = currentIndex !== -1
-                            editButton.enabled = hasCurrentIndex
-                            runButton.enabled = hasCurrentIndex
-                        }
-                        onCountChanged: {
-                            var isEmpty = count === 0
-                            removeButton.enabled = !isEmpty
-                        }
+                        onCurrentIndexChanged: updateStates()
+                        onCountChanged: updateStates()
                     }
 
                     style: ScrollViewStyle {
