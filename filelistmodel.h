@@ -1,28 +1,10 @@
-#ifndef PROGRAMLISTMODEL_H
-#define PROGRAMLISTMODEL_H
+#ifndef FILELISTMODEL_H
+#define FILELISTMODEL_H
 
 #include <QAbstractListModel>
-#include <QIcon>
-
-class FileItem : public QObject {
-    Q_OBJECT
-
-public:
-    FileItem(const QString & pathFile, QObject * parent = 0);
-    void load(const QString & pathFile);
-
-    QString getPath();
-    QString getName();
-    QIcon getIcon();
-    QString getIdIcon();
-
-private:
-    QString path;
-    QString name;
-    QIcon icon;
-};
-
 #include "fileiconimageprovider.h"
+
+class FileItem;
 
 class FileListModel : public QAbstractListModel {
     Q_OBJECT
@@ -56,9 +38,12 @@ public slots:
     void addFileFromUrl(const QUrl & url);
     void removeFile(int index);
 
+private slots:
+    void itemChanged();
+
 private:
     QList<FileItem *> files;
-    QHash<QString, FileItem *> hash_IdIcon_File;
+    QHash<QString, FileItem *> hash_IdFile_File;
 };
 
-#endif // PROGRAMLISTMODEL_H
+#endif // FILELISTMODEL_H

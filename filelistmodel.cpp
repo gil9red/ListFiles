@@ -1,42 +1,7 @@
 #include "filelistmodel.h"
+#include "fileitem.h"
 
-#include <QFileInfo>
-#include <QFileIconProvider>
-#include <QCryptographicHash>
-#include <QDebug>
-#include <QLabel>
-
-FileItem::FileItem(const QString & pathFile, QObject * parent/* = 0*/)
-    : QObject (parent) {
-    load(pathFile);
-}
-
-void FileItem::load(const QString & pathFile) {
-    QFileInfo fileInfo(pathFile);
-    path = fileInfo.absoluteFilePath();
-    name = fileInfo.fileName();
-    icon = QFileIconProvider().icon(fileInfo);
-
-    if (fileInfo.isSymLink())
-        icon = QFileIconProvider().icon(QFileInfo(fileInfo.symLinkTarget()));
-
-    if (icon.isNull())
-        icon = QFileIconProvider().icon(QFileIconProvider::File);
-}
-
-QString FileItem::getPath() {
-    return path;
-}
-QString FileItem::getName() {
-    return name;
-}
-QIcon FileItem::getIcon() {
-    return icon;
-}
-QString FileItem::getIdIcon() {
-    return QCryptographicHash::hash(getPath().toUtf8(), QCryptographicHash::Sha1).toHex();
-}
-
+#include "utils.h"
 
 FileListModel::FileListModel(QObject *parent)
     : QAbstractListModel(parent) {
@@ -45,7 +10,11 @@ FileListModel::FileListModel(QObject *parent)
 
 void FileListModel::addFile(const QString & pathFile) {
     FileItem * file = new FileItem(pathFile, this);
-    hash_IdIcon_File[file->getIdIcon()] = file;
+    file->model = this;
+    file->setParent(this);
+    QObject::connect(file, SIGNAL(aboutChanged()), SLOT(itemChanged()));
+
+    hash_IdFile_File[file->getIdFile()] = file;
 
     int length = files.length();
 
@@ -54,7 +23,7 @@ void FileListModel::addFile(const QString & pathFile) {
     endInsertRows();
 
     //говорим view, что данные изменились
-    emit dataChanged(createIndex(0,0), createIndex(length,0));
+    emit dataChanged(createIndex(length, 0), createIndex(length, 0));
 }
 void FileListModel::addFileFromUrl(const QUrl & url) {
     if (url.isLocalFile())
@@ -62,14 +31,36 @@ void FileListModel::addFileFromUrl(const QUrl & url) {
 }
 void FileListModel::removeFile(int index) {
     FileItem * file = files.at(index);
-    hash_IdIcon_File.remove(file->getIdIcon());
+    hash_IdFile_File.remove(file->getIdFile());
 
     beginRemoveRows(QModelIndex(), index, index);
     files.takeAt(index)->deleteLater(); // Удаляем из списка и освобождаем память
     endRemoveRows();
 
     //говорим view, что данные изменились
-    emit dataChanged(createIndex(0,0), createIndex(files.length(),0));
+    emit dataChanged(createIndex(index, 0), createIndex(index, 0));
+}
+
+void FileListModel::itemChanged() {
+    FileItem * item = qobject_cast<FileItem *> (sender());
+    if (!item) {
+        WARNING("null pointer!");
+        return;
+    }
+
+    // Проверка Id - вдруг элемент изменился
+    const QString & oldId = hash_IdFile_File.key(item);
+    const QString & newId = item->getIdFile();
+    if (oldId != newId) {
+        // обновим хеш
+        hash_IdFile_File.remove(oldId); // удалим старую запись
+        hash_IdFile_File[newId] = item; // добавим новую
+    }
+
+    int index = files.indexOf(item);
+
+    //говорим view, что данные изменились
+    emit dataChanged(createIndex(index, 0), createIndex(index, 0));
 }
 
 int FileListModel::rowCount(const QModelIndex &/*= QModelIndex()*/) const {
@@ -82,24 +73,24 @@ QVariant FileListModel::data(const QModelIndex & index, int role /*= Qt::Display
     FileItem * file = files.at(index.row());
 
     switch (role) {
-        case Qt::EditRole:
-        case Qt::ToolTipRole:
-        case Path:
-            return file->getPath();
+    case Qt::EditRole:
+    case Qt::ToolTipRole:
+    case Path:
+        return file->getPath();
 
-        case Qt::DisplayRole:
-        case Name:
-            return file->getName();
+    case Qt::DisplayRole:
+    case Name:
+        return file->getName();
 
-        case Qt::DecorationRole:
-        case Icon:
-            return file->getIcon();
+    case Qt::DecorationRole:
+    case Icon:
+        return file->getIcon();
 
-        case IdIcon:
-            return file->getIdIcon();
+    case IdIcon:
+        return file->getIdFile();
 
-        default:
-            return QVariant();
+    default:
+        return QVariant();
     }
 
     return QVariant();
@@ -114,7 +105,11 @@ QHash<int, QByteArray> FileListModel::roleNames() const {
 }
 
 QPixmap FileListModel::iconFileFromId(const QString & id) {
-    return hash_IdIcon_File[id]->getIcon().pixmap(32, 32);
+    FileItem * item = hash_IdFile_File[id];
+    if (!item)
+        return QPixmap();
+
+    return item->getIcon();
 }
 
 FileItem * FileListModel::item(int index) {

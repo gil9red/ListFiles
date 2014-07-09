@@ -7,15 +7,21 @@
 #include <QDebug>
 #include <QtXml/QDomDocument>
 #include <QTextStream>
+#include <QMessageBox>
+#include "editfileitem.h"
+#include "fileitem.h"
 
 FileListManager::FileListManager(QObject *parent) :
     QObject(parent) {
-
-    read();
+    filterModel.setSourceModel(&model);
+    filterModel.setDynamicSortFilter(true);
 }
 
 FileListModel * FileListManager::getModel() {
     return &model;
+}
+QSortFilterProxyModel * FileListManager::getSortFilterProxyModel() {
+    return &filterModel;
 }
 QQuickImageProvider * FileListManager::getImageProvider() {
     return model.getNewImageProvider();
@@ -68,8 +74,32 @@ void FileListManager::write() {
     }
 }
 
+int FileListManager::countFiles() {
+    return model.rowCount();
+}
+int FileListManager::countFilterFiles() {
+    return filterModel.rowCount();
+}
+void FileListManager::addFileFromUrls(const QList<QUrl> & urls) {
+    foreach (QUrl url, urls)
+        model.addFileFromUrl(url);
+
+    write(); // Сохраняем список файлов
+}
+void FileListManager::removeFile(int index) {
+    QModelIndex proxyIndex = filterModel.index(index, 0);
+    QModelIndex modelIndex = filterModel.mapToSource(proxyIndex); // конвертируем индекс прокси модели в индекс нашей модель
+    int row = modelIndex.row();
+
+    model.removeFile(row);
+    write(); // Сохраняем список файлов
+}
 void FileListManager::run(int index) {
-    QUrl url = QUrl::fromLocalFile(model.item(index)->getPath());
+    QModelIndex proxyIndex = filterModel.index(index, 0);
+    QModelIndex modelIndex = filterModel.mapToSource(proxyIndex); // конвертируем индекс прокси модели в индекс нашей модель
+    int row = modelIndex.row();
+
+    QUrl url = QUrl::fromLocalFile(model.item(row)->getPath());
     QDesktopServices::openUrl(url);
 }
 void FileListManager::quit() {
@@ -77,8 +107,21 @@ void FileListManager::quit() {
     qApp->quit();
 }
 void FileListManager::edit(int index) {
-    qDebug() << "FileListManager::edit(int index)" << model.item(index)->getPath();
+    QModelIndex proxyIndex = filterModel.index(index, 0);
+    QModelIndex modelIndex = filterModel.mapToSource(proxyIndex); // конвертируем индекс прокси модели в индекс нашей модель
+    int row = modelIndex.row();
+    FileItem * file = model.item(row);
+
+    EditFileItem edit;
+    edit.setFileItem(file);
+    edit.exec();
+}
+void FileListManager::searchItems(const QString & text) {
+    filterModel.setFilterFixedString(text);
 }
 void FileListManager::about() {
-    qApp->aboutQt();
+    const QString & text = qApp->applicationName() + " v" + qApp->applicationVersion()
+            + QObject::trUtf8("\nAuthor Ilya Petrash")
+            + QObject::trUtf8("\nContains links files");
+    QMessageBox::about(0, QObject::trUtf8("About"), text);
 }

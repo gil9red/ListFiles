@@ -8,8 +8,10 @@ FileIconImageProvider::FileIconImageProvider(FileListModel * model)
 }
 
 QPixmap FileIconImageProvider::requestPixmap(const QString &id, QSize *size, const QSize &requestedSize) {
+    Q_UNUSED(requestedSize)
+
     QPixmap pixmap = fileListModel->iconFileFromId(id);
     if (size)
-        *size = pixmap.size();
+        *size = pixmap.isNull() ? QSize(32, 32) : pixmap.size();
     return pixmap;
 }
